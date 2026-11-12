@@ -23,7 +23,7 @@ export function Overlay({ status, score, onStart, onResume }: Props) {
       ) : (
         <button onClick={onStart}>{status === 'idle' ? 'Jouer' : 'Rejouer'}</button>
       )}
-      <p className="hint">← → ou A / D pour bouger · Espace pour pause</p>
+      <p className="hint">← → / A D, souris ou doigt pour bouger · Espace pour pause</p>
     </div>
   )
 }

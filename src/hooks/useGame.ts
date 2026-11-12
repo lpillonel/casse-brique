@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type RefObject } from 'react'
 import { audio, type MusicMode } from '../audio/audio'
 import { createInitialState, step } from '../game/engine'
 import type { GameState } from '../game/types'
 import { useKeyboard } from './useKeyboard'
+import { usePointer } from './usePointer'
 
 /**
  * Owns the game state and the requestAnimationFrame loop.
@@ -12,8 +13,12 @@ import { useKeyboard } from './useKeyboard'
 const musicFor = (status: GameState['status']): MusicMode =>
   status === 'playing' ? 'on' : status === 'paused' ? 'paused' : 'off'
 
-export function useGame(onFrame: (state: GameState) => void) {
+export function useGame(
+  onFrame: (state: GameState) => void,
+  canvasRef: RefObject<HTMLCanvasElement | null>,
+) {
   const input = useKeyboard()
+  usePointer(input, canvasRef)
   const [hud, setHud] = useState(createInitialState)
   const stateRef = useRef<GameState>(hud)
   const onFrameRef = useRef(onFrame)

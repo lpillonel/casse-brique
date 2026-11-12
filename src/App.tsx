@@ -16,6 +16,7 @@ export default function App() {
 
   // Fullscreen is applied to the whole app (title, HUD, canvas, overlay), not just the canvas.
   const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenEnabled) return // e.g. iPhone Safari
     if (document.fullscreenElement) void document.exitFullscreen()
     else void appRef.current?.requestFullscreen()
   }, [])
@@ -31,7 +32,7 @@ export default function App() {
     if (ctx) render(ctx, state)
   }, [])
 
-  const { hud, start, togglePause } = useGame(draw)
+  const { hud, start, togglePause } = useGame(draw, canvasRef)
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -56,6 +57,9 @@ export default function App() {
         lives={hud.lives}
         fullscreen={fullscreen}
         onToggleFullscreen={toggleFullscreen}
+        canFullscreen={document.fullscreenEnabled}
+        status={hud.status}
+        onTogglePause={togglePause}
         muted={muted}
         onToggleMute={toggleMute}
       />

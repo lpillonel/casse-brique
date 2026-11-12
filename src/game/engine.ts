@@ -185,12 +185,14 @@ export function step(state: GameState, input: Input, dt: number): GameState {
 
   // --- Paddle ---
   const dir = (input.right ? 1 : 0) - (input.left ? 1 : 0)
+  // The pointer, when active, places the paddle directly; otherwise the keys move it.
+  const wantedX =
+    input.pointerX !== null
+      ? input.pointerX - state.paddle.width / 2
+      : state.paddle.x + dir * PADDLE_SPEED * dt
   const paddle: Paddle = {
     ...state.paddle,
-    x: Math.max(
-      0,
-      Math.min(CANVAS_WIDTH - state.paddle.width, state.paddle.x + dir * PADDLE_SPEED * dt),
-    ),
+    x: Math.max(0, Math.min(CANVAS_WIDTH - state.paddle.width, wantedX)),
   }
 
   // --- Balls ---

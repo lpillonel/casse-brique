@@ -64,4 +64,6 @@ export interface GameState {
 export interface Input {
   left: boolean
   right: boolean
+  /** Where the pointer (mouse / finger / pen) wants the paddle center, in canvas pixels. */
+  pointerX: number | null
 }
