@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { audio, type MusicMode } from '../audio/audio'
 import { createInitialState, step } from '../game/engine'
 import type { GameState } from '../game/types'
 import { useKeyboard } from './useKeyboard'
@@ -8,6 +9,9 @@ import { useKeyboard } from './useKeyboard'
  * The state lives in a ref (updated 60x/s); a React state copy is pushed
  * only for the HUD/overlay, so React doesn't re-render the canvas every frame.
  */
+const musicFor = (status: GameState['status']): MusicMode =>
+  status === 'playing' ? 'on' : status === 'paused' ? 'paused' : 'off'
+
 export function useGame(onFrame: (state: GameState) => void) {
   const input = useKeyboard()
   const [hud, setHud] = useState(createInitialState)
@@ -30,6 +34,10 @@ export function useGame(onFrame: (state: GameState) => void) {
       const next = step(prev, input.current, dt)
       stateRef.current = next
       onFrameRef.current(next)
+      if (next !== prev) {
+        next.events.forEach((e) => audio.sfx(e))
+        if (next.status !== prev.status) audio.setMusic(musicFor(next.status))
+      }
 
       if (next.status !== prev.status || next.score !== prev.score || next.lives !== prev.lives) {
         setHud(next)
@@ -42,10 +50,14 @@ export function useGame(onFrame: (state: GameState) => void) {
 
   const setStatus = useCallback((status: GameState['status']) => {
     stateRef.current = { ...stateRef.current, status }
+    audio.setMusic(musicFor(status))
     setHud(stateRef.current)
   }, [])
 
   const start = useCallback(() => {
+    audio.unlock()
+    audio.sfx('start')
+    audio.setMusic('on')
     stateRef.current = { ...createInitialState(), status: 'playing' }
     setHud(stateRef.current)
   }, [])

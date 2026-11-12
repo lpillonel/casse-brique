@@ -22,6 +22,7 @@ h1 { margin: 0; }
 
 .hud {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   width: 640px;
   max-width: 100vw;
@@ -60,3 +61,32 @@ h1 { margin: 0; }
 }
 
 .hint { margin: 0; font-size: 0.85rem; opacity: 0.7; }
+
+.hud-btn {
+  padding: 0.2rem 0.7rem;
+  font-size: 0.8rem;
+  color: inherit;
+  background: transparent;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.hud-btn:hover { border-color: #64748b; }
+
+/* Fullscreen: the canvas scales up to fill the screen while keeping its 4:3 ratio. */
+.app:fullscreen {
+  --header: 6rem; /* title + HUD + gaps */
+  --canvas-w: min(100vw - 4px, (100vh - var(--header)) * 4 / 3);
+  justify-content: center;
+  background: #020617;
+}
+
+.app:fullscreen .canvas {
+  width: var(--canvas-w);
+  height: auto;
+}
+
+.app:fullscreen .hud { width: var(--canvas-w); }
+
+.hud-buttons { display: flex; gap: 0.5rem; }
